@@ -2,7 +2,7 @@
   "db": {
     "dbName": "test",
     "host": "172.17.0.1",
-    "port": "3306",
+    "port": "3307",
     "user": "root",
     "password": "mysql",
     "dialect": "mysql"

@@ -1,22 +1,40 @@
 #!/usr/bin/env node
 
-const app = require('../app'),
-    debug = require('debug')('test-node:server'),
-    http = require('http'),
+const http = require('http'),
     config = require('config');
 
-const port = config.get('db').get('server') || '3000';
+// use express debugger
+if (config.get('debug')) {
+    process.env['DEBUG'] = 'test-node:server';
+}
+const debug = require('debug')('test-node:server');
+
+const app = require('../app'),
+    models = require('../models/db');
+
+const port = config.get('server').get('port') || '3000';
 app.set('port', port);
 
 const server = http.createServer(app);
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+
+/**
+ * Create db if not exists and sync models before start listen on port.
+ */
+models.preConfiging()
+    .then(models.sequelize.sync())
+    .then(() => {
+        server.listen(port);
+        server.on('error', onError);
+        server.on('listening', onListening);
+
+    })
+    .catch((er) => console.error(er.message, er.stack)
+);
 
 /**
  * Event listener for HTTP server "error" event.
  */
-// simply hide stack trace
+// just hide stack trace
 function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
@@ -28,7 +46,6 @@ function onError(error) {
 /**
  * Event listener for HTTP server "listening" event.
  */
-
 function onListening() {
-  debug('Listening on ' + server.address());
+  debug('Listening on ' + server.address().port);
 }

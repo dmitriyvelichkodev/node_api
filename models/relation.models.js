@@ -1,5 +1,5 @@
 const db = require('./db'),
-    Organization = require('./organization.model');
+    Organization = require('./organization.models');
 
 const Relation = db.sequelize.define('Relation', {}, {
     timestamps: false,
