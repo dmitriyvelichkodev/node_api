@@ -1,14 +1,22 @@
-const db = require('./db'),
-    Organization = require('./organization.models');
+module.exports = db => {
 
-const Relation = db.sequelize.define('Relation', {}, {
-    timestamps: false,
-    underscored: false,
-});
+    const Relation = db.sequelize.define('Relation', {}, {
+        timestamps: false,
+        underscored: false,
+    });
 
-Relation.belongsTo(Organization,
-    {foreignKey: {name: 'ParentName', allowNull: false}, onDelete: 'CASCADE'});
-Relation.belongsTo(Organization,
-    {foreignKey: {name: 'DaughterName', allowNull: false}, onDelete: 'CASCADE'});
+    const Organization = require('./organization.models')(db);
 
-module.exports = Relation;
+    Relation.belongsTo(Organization,
+        {foreignKey: {name: 'ParentName', allowNull: false}, onDelete: 'CASCADE'});
+    Relation.belongsTo(Organization,
+        {foreignKey: {name: 'DaughterName', allowNull: false}, onDelete: 'CASCADE'});
+
+    return Relation;
+};
+
+
+
+
+
+

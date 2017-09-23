@@ -1,13 +1,14 @@
-const db = require('./db');
+module.exports = db => {
 
-const Organization = db.sequelize.define('organization', {
-    name: {
-        type: db.Sequelize.STRING,
-        primaryKey: true
-    }
-}, {
-    timestamps: false,
-    underscored: false,
-});
+    const Organization = db.sequelize.define('Organization', {
+        name: {
+            type: db.Sequelize.STRING,
+            primaryKey: true
+        }
+    }, {
+        timestamps: false,
+        underscored: false,
+    });
 
-module.exports = Organization;
+    return Organization;
+};

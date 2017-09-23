@@ -1,7 +1,5 @@
 const Sequelize = require('sequelize'),
-    config = require('config'),
-    debug = require('debug')('test-node:server'),
-    mysql = require('promise-mysql');
+    config = require('config');
 
 const dbConfig = config.get('db');
 
@@ -17,31 +15,16 @@ const sequelize = new Sequelize(
     }
 );
 
-const createDatabase = conn => {
-    return conn.query('CREATE DATABASE IF NOT EXISTS ' + dbConfig.get("dbName"))
-        .then(() => {
-            debug("Database: " + dbConfig.get("dbName") + " was created");
-            conn.end();
-        })
+const db = {
+    Sequelize: Sequelize,
+    sequelize: sequelize
 };
 
-// Sequilize doesn't support creating database while or before connection to mysql db,
-// but creates connection only to pointed database. In that way just make additional
-// connection before start server to ensure that database from config exists.
-const preConfiging = () => mysql.createConnection({
-        host: dbConfig.get('host'),
-        user: dbConfig.get('user'),
-        password: dbConfig.get('password'),
-        port: dbConfig.get('port')
-    })
-    .then(conn => {
-        debug("Connected to mysql for pre configuration");
-        return conn;
-    })
-    .then(createDatabase);
+const Organization = require('./organization.models')(db);
+const Relation = require('./relation.models')(db);
 
 module.exports = {
-    Sequelize: Sequelize,
-    sequelize: sequelize,
-    preConfiging: preConfiging
+    db: db,
+    Organization: Organization,
+    Relation: Relation
 };
