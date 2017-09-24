@@ -1,5 +1,6 @@
-// TODO correctly check empty objects
-const debug = require('debug')('test-node:server');
+const debug = require('debug')('test-node:server'),
+    _ = require('lodash'),
+    httpStatus = require('http-status');
 
 const models = require('../models/db'),
     er = require('../helpers/errors');
@@ -19,14 +20,14 @@ class OrgNetworkParser {
         if (~this.cyclePath.indexOf(name)) {
             this.cyclePath.push(name);
             const msg = `Received data has cycle dependency: ${this.cyclePath}`;
-            throw new er.HttpError(msg, 422);
+            throw new er.APIError(msg, httpStatus.UNPROCESSABLE_ENTITY);
         } else {
             this.cyclePath.push(name);
         }
     }
 
     fetchRecords(srcObj, parentName) {
-        if (!srcObj) return;
+        if (_.isEmpty(srcObj)) return;
 
         const currentOrg = {name: srcObj.org_name};
         this.detectCycle(srcObj.org_name);
@@ -66,7 +67,7 @@ class OrgNetworkParser {
     }
 
     collectingData(obj) {
-        if (!obj) return Promise.resolve();
+        if (_.isEmpty(obj)) return Promise.resolve();
 
         return models.db.sequelize.transaction()
             .then(t => {
@@ -80,18 +81,17 @@ class OrgNetworkParser {
 }
 
 const createOrganizationsNetwork = function(req, res, next) {
-    const orgNetworkSource = req.body;
-    if (!orgNetworkSource) return Promise.resolve();
-
     const parser = new OrgNetworkParser();
-    parser.collectingData(orgNetworkSource)
+    parser.collectingData(req.body)
         .then(() => {
-            res.status(201);
-            res.json({msg: "Created"})
+            const status = httpStatus.CREATED;
+            res.status(status);
+            res.json({message: httpStatus[status]})
         })
         .catch((er) => {
-            res.status(er.status || 500);
-            res.json({msg: er.message || "Internal server error"});
+            const status = er.status || httpStatus.INTERNAL_SERVER_ERROR;
+            res.status(status);
+            res.json({message: er.message || httpStatus[status]});
         });
 };
 
