@@ -17,8 +17,6 @@ module.exports = function(db) {
             return Promise.resolve();
         }
 
-        console.log("||"+relationObj.parentName + '||' + relationObj.daughterName+"||");
-
         return Relation.findOrCreate({
                 where: relationObj,
                 transaction: transaction

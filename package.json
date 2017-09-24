@@ -6,8 +6,6 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "bluebird": "^3.5.0",
-    "bluebird-settle": "^1.0.2",
     "body-parser": "~1.17.1",
     "config": "^1.26.2",
     "cookie-parser": "~1.4.3",
