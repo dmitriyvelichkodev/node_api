@@ -8,13 +8,20 @@ module.exports = function(db) {
     const Organization = require('./organization.models')(db);
 
     Relation.belongsTo(Organization,
-        {foreignKey: {name: 'ParentName', allowNull: false}, onDelete: 'CASCADE'});
+        {foreignKey: {name: 'parentName', allowNull: false}, onDelete: 'CASCADE'});
     Relation.belongsTo(Organization,
-        {foreignKey: {name: 'DaughterName', allowNull: false}, onDelete: 'CASCADE'});
+        {foreignKey: {name: 'daughterName', allowNull: false}, onDelete: 'CASCADE'});
 
-    Relation.creating = (relationObj) => {
+    Relation.creating = (relationObj, transaction) => {
+        if (!relationObj || !relationObj.parentName || !relationObj.daughterName) {
+            return Promise.resolve();
+        }
+
+        console.log("||"+relationObj.parentName + '||' + relationObj.daughterName+"||");
+
         return Relation.findOrCreate({
-                where: relationObj
+                where: relationObj,
+                transaction: transaction
             })
             .spread((relation, created) => {
 

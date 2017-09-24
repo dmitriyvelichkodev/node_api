@@ -10,9 +10,12 @@ module.exports = function(db) {
         underscored: false,
     });
 
-    Organization.creating = (currentOrg) => {
+    Organization.creating = (currentOrg, transaction) => {
+        if (!currentOrg || !currentOrg.name) return Promise.resolve();
+
         return Organization.findOrCreate({
-                where: currentOrg
+                where: currentOrg,
+                transaction: transaction
             })
             .spread((organization, created) => {
 
