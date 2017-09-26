@@ -19,6 +19,11 @@ class OrgNetworkParser {
 
         const currentOrg = {name: srcObj.org_name};
 
+        if (parentName === currentOrg.name) {
+            const msg = `Received data has organization that referenced to itself: ${parentName}`;
+            throw new er.APIError(msg, httpStatus.UNPROCESSABLE_ENTITY);
+        }
+
         this.promises.push(
             models.Organization.creating(currentOrg, this.transaction)
                 .then(() => {
@@ -41,7 +46,7 @@ class OrgNetworkParser {
         const transactionId = this.transaction.id;
         const t = this.transaction.commit();
         // TODO move this log from server log
-        debug(`Transaction: ${transactionId} COMMITED`);
+        debug(`Transaction: ${transactionId} COMMIT`);
         return t;
     }
 
@@ -49,7 +54,7 @@ class OrgNetworkParser {
         const transactionId = this.transaction.id;
         this.transaction.rollback();
         // TODO move this log from server log
-        debug(`Transaction: ${transactionId} ROLLBACKED`);
+        debug(`Transaction: ${transactionId} ROLLBACK`);
         throw err;
     }
 
@@ -61,6 +66,7 @@ class OrgNetworkParser {
                 this.transaction = t;
                 this.fetchRecords(obj, null);
             })
+            .catch((err) => this.handleFailedCollecting(err))
             .then(() => Promise.all(this.promises))
             .then((results) => this.handleSucceededCollecting(results))
             .catch((err) => this.handleFailedCollecting(err))
@@ -76,9 +82,14 @@ const createOrganizationsNetwork = function(req, res, next) {
             res.json({message: httpStatus[status]})
         })
         .catch((er) => {
-            const status = er.status || httpStatus.INTERNAL_SERVER_ERROR;
+            let status = er.status || httpStatus.INTERNAL_SERVER_ERROR,
+                msg = er.message || httpStatus[status];
+            if (status === httpStatus.INTERNAL_SERVER_ERROR) {
+                msg = httpStatus[status];
+            }
+
             res.status(status);
-            res.json({message: er.message || httpStatus[status]});
+            res.json({message: msg});
         });
 };
 
