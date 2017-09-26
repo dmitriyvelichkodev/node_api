@@ -2,7 +2,7 @@ const debug = require('debug')('test-node:server'),
     _ = require('lodash'),
     httpStatus = require('http-status');
 
-const models = require('../models/db'),
+const models = require('../models/models'),
     er = require('../helpers/errors');
 
 

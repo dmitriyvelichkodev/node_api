@@ -1,5 +1,3 @@
-// TODO validation middleware
-
 const express = require('express');
 
 const organizationsCtrl = require('../controllers/organizations.controller');

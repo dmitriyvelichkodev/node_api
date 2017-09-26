@@ -38,7 +38,7 @@ const startServer = () => {
  * Synchronize models with sequelize
  */
 const syncModels = () => {
-    const models = require('../models/db');
+    const models = require('../models/models');
     return models.db.sequelize.sync();
 };
 
