@@ -34,19 +34,12 @@ const startServer = () => {
     });
 };
 
-/**
- * Synchronize models with sequelize
- */
-const syncModels = () => {
-    const models = require('../models/models');
-    return models.db.sequelize.sync();
-};
+
 
 /**
  * Create db if not exists and sync models before start listen on port.
  */
-const preConfig = require('../helpers/preConfig');
-preConfig.dbPreConfiging()
-    .then(syncModels)
+const dbInit = require('../config/dbInit');
+dbInit.init()
     .then(startServer)
     .catch((er) => console.error(er.message, er.stack));

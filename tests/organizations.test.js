@@ -3,26 +3,36 @@ const request = require('supertest-as-promised'),
     chai = require('chai');
 
 const app = require('../app'),
+    dbInit = require('../config/dbInit'),
+    models = require('../models/models'),
     expect = chai.expect;
 
 chai.config.includeStack = true;
 
+/*
+ Use careful only in testing
+ */
+const dbCleanUp = () => {
+    return models.db.sequelize.sync({force: true});
+};
 
 describe('## Test /api/organizations', () => {
-    let orgsSuccess = {
-            "org_name": "Paradise Island",
-            "daughters": [{"org_name":"Banana tree"}]
-        },
-        orgsFailedInvalidFormat = {
-            "org_name": "Paradise Island",
-            "daughters": {"org_name":"Banana tree"}
-        },
-        orgsFailedReferenceToItself = {
-            "org_name": "Paradise Island",
-            "daughters": [{"org_name":"Paradise Island"}]
-        };
+
+    before(function() {
+        return dbInit.creatingConnection()
+            .then(dbInit.creatingDatabase)
+            .then(dbCleanUp);
+    });
+
+    beforeEach(function() {
+        return dbCleanUp();
+    });
 
     describe('# POST /api/organizations', () => {
+        let orgsSuccess = {
+                "org_name": "Paradise Island",
+                "daughters": [{"org_name":"Banana tree"}]
+            };
         it('should create organizations with their relations', (done) => {
             request(app)
                 .post('/api/organizations')
@@ -35,6 +45,11 @@ describe('## Test /api/organizations', () => {
                 .catch(done);
         });
 
+
+        let orgsFailedInvalidFormat = {
+                "org_name": "Paradise Island",
+                "daughters": {"org_name":"Banana tree"}
+            };
         it('should fails due invalid format post data', (done) => {
             request(app)
                 .post('/api/organizations')
@@ -47,6 +62,10 @@ describe('## Test /api/organizations', () => {
                 .catch(done);
         });
 
+        let orgsFailedReferenceToItself = {
+                "org_name": "Paradise Island",
+                "daughters": [{"org_name":"Paradise Island"}]
+            };
         it('should fails due org references to itself', (done) => {
             request(app)
                 .post('/api/organizations')
