@@ -8,29 +8,16 @@ const models = require('../models/models'),
 
 class OrgNetworkParser {
     constructor() {
-        // For detecting cycle dependencies in received data collects passed orgs
-        this.cyclePath = [];
         // Think about request for creating as a single transaction
         this.transaction = null;
         // To send response in proper time observe all promises in one place
         this.promises = [];
     }
 
-    detectCycle(name) {
-        if (~this.cyclePath.indexOf(name)) {
-            this.cyclePath.push(name);
-            const msg = `Received data has cycle dependency: ${this.cyclePath}`;
-            throw new er.APIError(msg, httpStatus.UNPROCESSABLE_ENTITY);
-        } else {
-            this.cyclePath.push(name);
-        }
-    }
-
     fetchRecords(srcObj, parentName) {
         if (_.isEmpty(srcObj)) return;
 
         const currentOrg = {name: srcObj.org_name};
-        this.detectCycle(srcObj.org_name);
 
         this.promises.push(
             models.Organization.creating(currentOrg, this.transaction)
@@ -48,13 +35,12 @@ class OrgNetworkParser {
                 this.fetchRecords(el, srcObj.org_name);
             });
         }
-
-        this.cyclePath.pop();
     }
 
     handleSucceededCollecting() {
         const transactionId = this.transaction.id;
         const t = this.transaction.commit();
+        // TODO move this log from server log
         debug(`Transaction: ${transactionId} COMMITED`);
         return t;
     }
@@ -62,6 +48,7 @@ class OrgNetworkParser {
     handleFailedCollecting(err) {
         const transactionId = this.transaction.id;
         this.transaction.rollback();
+        // TODO move this log from server log
         debug(`Transaction: ${transactionId} ROLLBACKED`);
         throw err;
     }
