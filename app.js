@@ -7,7 +7,7 @@ const express = require('express'),
 
 const api = require('./routes/api.routes'),
     er = require('./helpers/errors'),
-    config = require('config');
+    config = require('./config/index');
 
 const app = express();
 

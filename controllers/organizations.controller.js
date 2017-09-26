@@ -42,19 +42,12 @@ class OrgNetworkParser {
         }
     }
 
-    handleSucceededCollecting() {
-        const transactionId = this.transaction.id;
-        const t = this.transaction.commit();
-        // TODO move this log from server log
-        debug(`Transaction: ${transactionId} COMMIT`);
-        return t;
+    handleSucceededCollecting(results) {
+        (this.transaction.finished) ? this.transaction : this.transaction.commit()
     }
 
     handleFailedCollecting(err) {
-        const transactionId = this.transaction.id;
-        this.transaction.rollback();
-        // TODO move this log from server log
-        debug(`Transaction: ${transactionId} ROLLBACK`);
+        (this.transaction.finished) ? this.transaction : this.transaction.rollback();
         throw err;
     }
 

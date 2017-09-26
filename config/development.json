@@ -1,6 +1,6 @@
 {
   "db": {
-    "dbName": "test",
+    "dbName": "org_dev",
     "host": "172.17.0.1",
     "port": "3307",
     "user": "root",
