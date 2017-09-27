@@ -43,11 +43,15 @@ class OrgNetworkParser {
     }
 
     handleSucceededCollecting(results) {
-        (this.transaction.finished) ? this.transaction : this.transaction.commit()
+        if (!this.transaction.finished) {
+            return this.transaction.commit();
+        }
     }
 
     handleFailedCollecting(err) {
-        (this.transaction.finished) ? this.transaction : this.transaction.rollback();
+        if (this.transaction.finished) {
+            this.transaction.rollback();
+        }
         throw err;
     }
 
