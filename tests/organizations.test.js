@@ -16,23 +16,26 @@ const dbCleanUp = () => {
     return models.db.sequelize.sync({force: true});
 };
 
-
-before(() => dbInit.creatingConnection()
-    .then(dbInit.creatingDatabase)
-    .then(dbCleanUp)
+before(function() {
+    return dbInit.creatingConnection()
+            .then(dbInit.creatingDatabase)
+            .then(dbCleanUp)
+    }
 );
 
-beforeEach(() => dbCleanUp);
+beforeEach(function() {
+    return dbCleanUp;
+});
 
-describe('## Testing /api/organizations', () => {
+describe('## Testing /api/organizations', function() {
 
-    describe('# POST /api/organizations', () => {
+    describe('# POST /api/organizations', function() {
 
         let orgsSuccess = {
                 "org_name": "Paradise Island",
                 "daughters": [{"org_name":"Banana tree"}]
             };
-        it('should create organizations with their relations', (done) => {
+        it('should create organizations with their relations', function(done) {
             request(app)
                 .post('/api/organizations')
                 .send(orgsSuccess)
@@ -49,7 +52,7 @@ describe('## Testing /api/organizations', () => {
                 "org_name": "Paradise Island",
                 "daughters": {"org_name":"Banana tree"}
             };
-        it('should fails due invalid format post data', (done) => {
+        it('should fails due invalid format post data', function(done) {
             request(app)
                 .post('/api/organizations')
                 .send(orgsFailedInvalidFormat)
@@ -65,7 +68,7 @@ describe('## Testing /api/organizations', () => {
                 "org_name": "Paradise Island",
                 "daughters": [{"org_name":"Paradise Island"}]
             };
-        it('should fails due org references to itself', (done) => {
+        it('should fails due org references to itself', function(done) {
             request(app)
                 .post('/api/organizations')
                 .send(orgsFailedReferenceToItself)
