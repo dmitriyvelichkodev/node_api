@@ -16,19 +16,18 @@ const dbCleanUp = () => {
     return models.db.sequelize.sync({force: true});
 };
 
-describe('## Test /api/organizations', () => {
 
-    before(function() {
-        return dbInit.creatingConnection()
-            .then(dbInit.creatingDatabase)
-            .then(dbCleanUp);
-    });
+before(() => dbInit.creatingConnection()
+    .then(dbInit.creatingDatabase)
+    .then(dbCleanUp)
+);
 
-    beforeEach(function() {
-        return dbCleanUp();
-    });
+beforeEach(() => dbCleanUp);
+
+describe('## Testing /api/organizations', () => {
 
     describe('# POST /api/organizations', () => {
+
         let orgsSuccess = {
                 "org_name": "Paradise Island",
                 "daughters": [{"org_name":"Banana tree"}]
