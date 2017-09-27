@@ -154,14 +154,32 @@ const createOrganizationsNetwork = function(req, res, next) {
 };
 
 /**
- * Handler for GET api/organizations
+ * Handler for GET api/organizations/:name/relations
  * @method getAllRelations
  * @param {Object} req Express request object.
  * @param {Object} res Express response object.
  * @param {Object} next Middleware function used by Express.
  */
 const getAllRelations = function(req, res, next) {
+    let pageNumber = parseInt(req.query.page),
+        targetName = req.params.name;
 
+    // default value if not pointed
+    if (typeof req.query.page === "undefined") {
+        pageNumber = 1;
+    }
+
+    if (isNaN(pageNumber) || pageNumber < 1) {
+        throw new er.APIError("Invalid page number", httpStatus.UNPROCESSABLE_ENTITY);
+    }
+    if (!targetName) {
+        throw new er.APIError("Invalid target organization name", httpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    models.Relation.gettingPaginated(targetName, pageNumber)
+        .then((result) => {
+            res.json(result);
+        });
 };
 
 module.exports = {
