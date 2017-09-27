@@ -1,0 +1,230 @@
+{
+    "project": {
+        "name": "The Foo API",
+        "description": "The Foo API: a library for doing X, Y, and Z",
+        "version": "1.2.1",
+        "url": "http://example.com/"
+    },
+    "files": {
+        "controllers/organizations.controller.js": {
+            "name": "controllers/organizations.controller.js",
+            "modules": {
+                "organizations.controller": 1
+            },
+            "classes": {
+                "OrgNetworkParser": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "routes/api.organizations.routes.js": {
+            "name": "routes/api.organizations.routes.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "routes/api.routes.js": {
+            "name": "routes/api.routes.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {
+        "organizations.controller": {
+            "name": "organizations.controller",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "OrgNetworkParser": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "controllers/organizations.controller.js",
+            "line": 13,
+            "description": "Provides classes and methods that process requests for /api/organizations"
+        }
+    },
+    "classes": {
+        "OrgNetworkParser": {
+            "name": "OrgNetworkParser",
+            "shortname": "OrgNetworkParser",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "organizations.controller",
+            "namespace": "",
+            "file": "controllers/organizations.controller.js",
+            "line": 13,
+            "description": "Allows to parse input JSON data in format:\n{\n  \"org_name\": \"Name of organization\",\n  \"daughters\":[\n      {\n          \"org_name\": \"Name of organization\",\n              \"daughters\": [...]\n      },\n      ...\n      ]\n}\nand fill data into db with method collectingData;"
+        }
+    },
+    "elements": {},
+    "classitems": [
+        {
+            "file": "controllers/organizations.controller.js",
+            "line": 29,
+            "description": "OrgNetworkParser think about requested data as a single transaction,\nalso handle all db operation asynchronous. Handle all db promises with\npromises array.",
+            "itemtype": "method",
+            "name": "constructor",
+            "class": "OrgNetworkParser",
+            "module": "organizations.controller"
+        },
+        {
+            "file": "controllers/organizations.controller.js",
+            "line": 40,
+            "description": "Recursive function that goes by organizations object,\nand fetch data for db insertion. Throws exception in\ncase at least one organization has reference to itself.",
+            "itemtype": "method",
+            "name": "fetchRecords",
+            "params": [
+                {
+                    "name": "srcObj",
+                    "description": "Object has structure described in OrgNetworkParser class description.",
+                    "type": "Object"
+                },
+                {
+                    "name": "parentName",
+                    "description": "Name of organization which daughters currently\nparsing",
+                    "type": "String"
+                }
+            ],
+            "class": "OrgNetworkParser",
+            "module": "organizations.controller"
+        },
+        {
+            "file": "controllers/organizations.controller.js",
+            "line": 78,
+            "description": "Method used for succeeded transaction end. Can be used in chain\nseveral times, COMMIT transaction only ones.",
+            "itemtype": "method",
+            "name": "handleSucceededCollecting",
+            "return": {
+                "description": "Returns transaction promise object if commit done.",
+                "type": "Promise"
+            },
+            "class": "OrgNetworkParser",
+            "module": "organizations.controller"
+        },
+        {
+            "file": "controllers/organizations.controller.js",
+            "line": 91,
+            "description": "Method used for failed transaction end. Can be used in chain\nseveral times, ROLLBACK transaction only ones. Send exception further.\nJust used for rollback operation.",
+            "itemtype": "method",
+            "name": "handleFailedCollecting",
+            "return": {
+                "description": "Returns transaction promise object if rollback done.",
+                "type": "Promise"
+            },
+            "class": "OrgNetworkParser",
+            "module": "organizations.controller"
+        },
+        {
+            "file": "controllers/organizations.controller.js",
+            "line": 106,
+            "description": "Class main method, that starts transaction and process all parsing and handle data\ndb insertion.",
+            "itemtype": "method",
+            "name": "collectingData",
+            "params": [
+                {
+                    "name": "obj",
+                    "description": "Object has structure described in OrgNetworkParser class description.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "Returns transaction promise object if rollback done.",
+                "type": "Promise"
+            },
+            "class": "OrgNetworkParser",
+            "module": "organizations.controller"
+        },
+        {
+            "file": "controllers/organizations.controller.js",
+            "line": 129,
+            "description": "Handler for POST api/organizations",
+            "itemtype": "method",
+            "name": "createOrganizationsNetwork",
+            "params": [
+                {
+                    "name": "req",
+                    "description": "Express request object.",
+                    "type": "Object"
+                },
+                {
+                    "name": "res",
+                    "description": "Express response object.",
+                    "type": "Object"
+                },
+                {
+                    "name": "next",
+                    "description": "Middleware function used by Express.",
+                    "type": "Object"
+                }
+            ],
+            "class": "OrgNetworkParser",
+            "module": "organizations.controller"
+        },
+        {
+            "file": "controllers/organizations.controller.js",
+            "line": 156,
+            "description": "Handler for GET api/organizations",
+            "itemtype": "method",
+            "name": "getAllRelations",
+            "params": [
+                {
+                    "name": "req",
+                    "description": "Express request object.",
+                    "type": "Object"
+                },
+                {
+                    "name": "res",
+                    "description": "Express response object.",
+                    "type": "Object"
+                },
+                {
+                    "name": "next",
+                    "description": "Middleware function used by Express.",
+                    "type": "Object"
+                }
+            ],
+            "class": "OrgNetworkParser",
+            "module": "organizations.controller"
+        },
+        {
+            "file": "routes/api.organizations.routes.js",
+            "line": 8,
+            "class": "",
+            "module": "organizations.controller"
+        },
+        {
+            "file": "routes/api.organizations.routes.js",
+            "line": 12,
+            "class": "",
+            "module": "organizations.controller"
+        },
+        {
+            "file": "routes/api.routes.js",
+            "line": 8,
+            "class": "",
+            "module": "organizations.controller"
+        }
+    ],
+    "warnings": [
+        {
+            "message": "Missing item type",
+            "line": " routes/api.organizations.routes.js:8"
+        },
+        {
+            "message": "Missing item type",
+            "line": " routes/api.organizations.routes.js:12"
+        },
+        {
+            "message": "Missing item type",
+            "line": " routes/api.routes.js:8"
+        }
+    ]
+}

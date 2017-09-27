@@ -1,3 +1,8 @@
+/**
+ * Provides classes and methods that process requests for /api/organizations
+ * @module organizations.controller
+ */
+
 const debug = require('debug')('test-node:server'),
     _ = require('lodash'),
     httpStatus = require('http-status');
@@ -5,15 +10,43 @@ const debug = require('debug')('test-node:server'),
 const models = require('../models/models'),
     er = require('../helpers/errors');
 
-
+/**
+ * Allows to parse input JSON data in format:
+ * {
+ *   "org_name": "Name of organization",
+ *   "daughters":[
+ *       {
+ *           "org_name": "Name of organization",
+ *               "daughters": [...]
+ *       },
+ *       ...
+ *       ]
+ * }
+ * and fill data into db with method collectingData;
+ * @class OrgNetworkParser
+ */
 class OrgNetworkParser {
+    /**
+     * OrgNetworkParser think about requested data as a single transaction,
+     * also handle all db operation asynchronous. Handle all db promises with
+     * promises array.
+     * @method constructor
+     */
     constructor() {
-        // Think about request for creating as a single transaction
         this.transaction = null;
-        // To send response in proper time observe all promises in one place
         this.promises = [];
     }
 
+    /**
+     * Recursive function that goes by organizations object,
+     * and fetch data for db insertion. Throws exception in
+     * case at least one organization has reference to itself.
+     *
+     * @method fetchRecords
+     * @param {Object} srcObj Object has structure described in OrgNetworkParser class description.
+     * @param {String} parentName Name of organization which daughters currently
+     * parsing
+     */
     fetchRecords(srcObj, parentName) {
         if (_.isEmpty(srcObj)) return;
 
@@ -42,12 +75,27 @@ class OrgNetworkParser {
         }
     }
 
-    handleSucceededCollecting(results) {
+    /**
+     * Method used for succeeded transaction end. Can be used in chain
+     * several times, COMMIT transaction only ones.
+     *
+     * @method handleSucceededCollecting
+     * @return {Promise} Returns transaction promise object if commit done.
+     */
+    handleSucceededCollecting() {
         if (!this.transaction.finished) {
             return this.transaction.commit();
         }
     }
 
+    /**
+     * Method used for failed transaction end. Can be used in chain
+     * several times, ROLLBACK transaction only ones. Send exception further.
+     * Just used for rollback operation.
+     *
+     * @method handleFailedCollecting
+     * @return {Promise} Returns transaction promise object if rollback done.
+     */
     handleFailedCollecting(err) {
         if (this.transaction.finished) {
             this.transaction.rollback();
@@ -55,6 +103,13 @@ class OrgNetworkParser {
         throw err;
     }
 
+    /**
+     * Class main method, that starts transaction and process all parsing and handle data
+     * db insertion.
+     * @method collectingData
+     * @param {Object} obj Object has structure described in OrgNetworkParser class description.
+     * @return {Promise} Returns transaction promise object if rollback done.
+     */
     collectingData(obj) {
         if (_.isEmpty(obj)) return Promise.resolve();
 
@@ -70,6 +125,14 @@ class OrgNetworkParser {
     }
 }
 
+
+/**
+ * Handler for POST api/organizations
+ * @method createOrganizationsNetwork
+ * @param {Object} req Express request object.
+ * @param {Object} res Express response object.
+ * @param {Object} next Middleware function used by Express.
+ */
 const createOrganizationsNetwork = function(req, res, next) {
     const parser = new OrgNetworkParser();
     parser.collectingData(req.body)
@@ -90,7 +153,13 @@ const createOrganizationsNetwork = function(req, res, next) {
         });
 };
 
-
+/**
+ * Handler for GET api/organizations
+ * @method getAllRelations
+ * @param {Object} req Express request object.
+ * @param {Object} res Express response object.
+ * @param {Object} next Middleware function used by Express.
+ */
 const getAllRelations = function(req, res, next) {
 
 };
