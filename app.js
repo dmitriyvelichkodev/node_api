@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 //detailed dev logging
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV === 'development') {
     expressWinston.requestWhitelist.push('body');
     expressWinston.responseWhitelist.push('body');
     app.use(expressWinston.logger({

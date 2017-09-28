@@ -97,7 +97,7 @@ class OrgNetworkParser {
      * @return {Promise} Returns transaction promise object if rollback done.
      */
     handleFailedCollecting(err) {
-        if (this.transaction.finished) {
+        if (!this.transaction.finished) {
             this.transaction.rollback();
         }
         throw err;

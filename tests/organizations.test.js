@@ -12,24 +12,25 @@ chai.config.includeStack = true;
 /*
  Use careful only in testing
  */
-const dbCleanUp = () => {
+const dbCleanUp = function() {
     return models.db.sequelize.sync({force: true});
 };
 
-before(function() {
-    return dbInit.creatingConnection()
-            .then(dbInit.creatingDatabase)
-            .then(dbCleanUp)
+before(function(done) {
+    dbInit.creatingConnection()
+        .then(dbInit.creatingDatabase)
+        .then(dbCleanUp)
+        .then(() => done())
     }
 );
-
-beforeEach(function() {
-    return dbCleanUp;
-});
 
 describe('## Testing /api/organizations', function() {
 
     describe('# POST /api/organizations', function() {
+        beforeEach(function(done) {
+            dbCleanUp()
+                .then(() => done())
+        });
 
         let orgsSuccess = {
                 "org_name": "Paradise Island",
@@ -44,14 +45,13 @@ describe('## Testing /api/organizations', function() {
                     expect(res.body.message).to.equal(httpStatus[201]);
                     done();
                 })
-                .catch(done);
+                .catch(() => done())
         });
 
-
         let orgsFailedInvalidFormat = {
-                "org_name": "Paradise Island",
-                "daughters": {"org_name":"Banana tree"}
-            };
+            "org_name": "Paradise Island",
+            "daughters": {"org_name":"Banana tree"}
+        };
         it('should fails due invalid format post data', function(done) {
             request(app)
                 .post('/api/organizations')
@@ -61,13 +61,13 @@ describe('## Testing /api/organizations', function() {
                     expect(res.body.message).to.equal(httpStatus[500]);
                     done();
                 })
-                .catch(done);
+                .catch(() => done())
         });
 
         let orgsFailedReferenceToItself = {
-                "org_name": "Paradise Island",
-                "daughters": [{"org_name":"Paradise Island"}]
-            };
+            "org_name": "Paradise Island",
+            "daughters": [{"org_name":"Paradise Island"}]
+        };
         it('should fails due org references to itself', function(done) {
             request(app)
                 .post('/api/organizations')
@@ -78,7 +78,18 @@ describe('## Testing /api/organizations', function() {
                         `Received data has organization that referenced to itself: ${orgsFailedReferenceToItself.org_name}`);
                     done();
                 })
-                .catch(done);
+                .catch(() => done())
         });
+
+
+
+
     });
+
+    // describe('# GET /api/organizations', function() {
+    //
+    //     beforeEach(function() {
+    //         return dbCleanUp;
+    //     });
+
 });
