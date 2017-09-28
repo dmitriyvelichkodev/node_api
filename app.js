@@ -6,7 +6,8 @@ const express = require('express'),
     bodyParser = require('body-parser'),
     rfs = require('rotating-file-stream'),
     fs = require('fs'),
-    expressWinston = require('express-winston');
+    expressWinston = require('express-winston'),
+    helmet = require('helmet');
 
 const api = require('./routes/api.routes'),
     er = require('./helpers/errors'),
@@ -40,6 +41,8 @@ if (process.env.NODE_ENV === 'development') {
     }));
 }
 
+// small middleware for protection, works with headers
+app.use(helmet());
 
 // mount all routes on /api path
 app.use('/api', api);
