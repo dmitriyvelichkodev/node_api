@@ -34,8 +34,6 @@ const startServer = () => {
     });
 };
 
-
-
 /**
  * Create db if not exists and sync models before start listen on port.
  */
