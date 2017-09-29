@@ -1,5 +1,5 @@
-const Sequelize = require('sequelize'),
-    config = require('config');
+const Sequelize = require('sequelize');
+const config = require('config');
 
 const dbConfig = config.get('db');
 
@@ -11,13 +11,13 @@ const sequelize = new Sequelize(
         port: dbConfig.get('port'),
         dialect: dbConfig.get('dialect'),
         isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.SERIALIZABLE,
-        timezone: 'UTC'
+        timezone: 'UTC',
     }
 );
 
 const db = {
     Sequelize: Sequelize,
-    sequelize: sequelize
+    sequelize: sequelize,
 };
 
 const Organization = require('./organization.models')(db);
@@ -26,5 +26,5 @@ const Relation = require('./relation.models')(db);
 module.exports = {
     db: db,
     Organization: Organization,
-    Relation: Relation
+    Relation: Relation,
 };

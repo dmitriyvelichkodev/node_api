@@ -1,24 +1,24 @@
-const express = require('express'),
-    path = require('path'),
-    logger = require('morgan'),
-    httpStatus = require('http-status'),
-    cookieParser = require('cookie-parser'),
-    bodyParser = require('body-parser'),
-    rfs = require('rotating-file-stream'),
-    fs = require('fs'),
-    expressWinston = require('express-winston'),
-    helmet = require('helmet');
+const express = require('express');
+const path = require('path');
+const logger = require('morgan');
+const httpStatus = require('http-status');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const rfs = require('rotating-file-stream');
+const fs = require('fs');
+const expressWinston = require('express-winston');
+const helmet = require('helmet');
 
-const api = require('./routes/api.routes'),
-    er = require('./helpers/errors'),
-    config = require('./config/index'),
-    winstonInstance =require('./helpers/winston'),
-    logDirectory = path.join(__dirname, 'log');
+const api = require('./routes/api.routes');
+const er = require('./helpers/errors');
+const config = require('./config/index');
+const winstonInstance =require('./helpers/winston');
+const logDirectory = path.join(__dirname, 'log');
 
 fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
 const accessLogStream = rfs('access.log', {
     interval: '1d',
-    path: logDirectory
+    path: logDirectory,
 });
 
 const app = express();
@@ -26,18 +26,19 @@ const app = express();
 
 app.use(logger('combined', {stream: accessLogStream}));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 
-//detailed dev logging
+// detailed dev logging
 if (process.env.NODE_ENV === 'development') {
     expressWinston.requestWhitelist.push('body');
     expressWinston.responseWhitelist.push('body');
     app.use(expressWinston.logger({
         winstonInstance,
         meta: true,
-        msg: 'HTTP {{req.method}} {{req.url}} {{res.statusCode}} {{res.responseTime}}ms',
-        colorStatus: true //status code (default green, 3XX cyan, 4XX yellow, 5XX red).
+        msg: 'HTTP {{req.method}} {{req.url}} {{res.statusCode}}' +
+             ' {{res.responseTime}}ms',
+        colorStatus: true, // (default green, 3XX cyan, 4XX yellow, 5XX red).
     }));
 }
 
@@ -60,7 +61,7 @@ app.use((err, req, res, next) => {
     res.status(status);
     res.json({
         message: err.message || httpStatus[status],
-        stack: config.env === 'development' ? err.stack : {}
+        stack: config.env === 'development' ? err.stack : {},
     });
     next();
 });

@@ -1,10 +1,9 @@
 module.exports = function(db) {
-
     const Organization = db.sequelize.define('Organization', {
         name: {
             type: db.Sequelize.STRING,
-            primaryKey: true
-        }
+            primaryKey: true,
+        },
     }, {
         timestamps: false,
         underscored: false,
@@ -15,11 +14,11 @@ module.exports = function(db) {
 
         return Organization.findOrCreate({
                 where: currentOrg,
-                transaction: transaction
+                transaction: transaction,
             })
             .spread((organization, created) => {
 
-            })
+            });
     };
 
     return Organization;

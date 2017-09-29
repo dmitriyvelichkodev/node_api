@@ -30,6 +30,8 @@
   },
   "devDependencies": {
     "chai-http": "^3.0.0",
+    "eslint": "^4.7.2",
+    "eslint-config-google": "^0.9.1",
     "mocha": "^3.5.3"
   }
 }

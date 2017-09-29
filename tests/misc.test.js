@@ -1,16 +1,15 @@
-const httpStatus = require('http-status'),
-    chai = require('chai'),
-    chaiHttp = require('chai-http');
+const httpStatus = require('http-status');
+const chai = require('chai');
+const chaiHttp = require('chai-http');
 
-const app = require('../app'),
-    expect = chai.expect;
+const app = require('../app');
+const expect = chai.expect;
 
 chai.config.includeStack = true;
 chai.use(chaiHttp);
 
 
 describe('## Misc', () => {
-
     describe('# GET /api/service-check', () => {
         it('should return OK', (done) => {
             chai.request(app)
@@ -19,8 +18,7 @@ describe('## Misc', () => {
                     expect(res.status).to.equal(httpStatus.OK);
                     expect(res.body.message).to.equal('OK');
                     done();
-                })
-
+                });
         });
     });
 
@@ -32,7 +30,7 @@ describe('## Misc', () => {
                     expect(res.status).to.equal(httpStatus.NOT_FOUND);
                     expect(res.body.message).to.equal('API not found');
                     done();
-                })
+                });
         });
     });
 });

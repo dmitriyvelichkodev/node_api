@@ -2,7 +2,7 @@ const express = require('express');
 
 const organizationsRoutes = require('./api.organizations.routes');
 
-const router = express.Router();
+const router = express.Router(); // eslint-disable-line new-cap
 
 
 /** GET api/service-check end point for testing service availability*/

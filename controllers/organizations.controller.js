@@ -3,12 +3,11 @@
  * @module organizations.controller
  */
 
-const debug = require('debug')('test-node:server'),
-    _ = require('lodash'),
-    httpStatus = require('http-status');
+const _ = require('lodash');
+const httpStatus = require('http-status');
 
-const models = require('../models/models'),
-    er = require('../helpers/errors');
+const models = require('../models/models');
+const er = require('../helpers/errors');
 
 /**
  * Allows to parse input JSON data in format:
@@ -23,6 +22,7 @@ const models = require('../models/models'),
  *       ]
  * }
  * and fill data into db with method collectingData;
+ *
  * @class OrgNetworkParser
  */
 class OrgNetworkParser {
@@ -43,7 +43,8 @@ class OrgNetworkParser {
      * case at least one organization has reference to itself.
      *
      * @method fetchRecords
-     * @param {Object} srcObj Object has structure described in OrgNetworkParser class description.
+     * @param {Object} srcObj Object has structure described in
+     *    OrgNetworkParser class description.
      * @param {String} parentName Name of organization which daughters currently
      * parsing
      */
@@ -53,7 +54,8 @@ class OrgNetworkParser {
         const currentOrg = {name: srcObj.org_name};
 
         if (parentName === currentOrg.name) {
-            const msg = `Received data has organization that referenced to itself: ${parentName}`;
+            const msg = `Received data has organization that referenced ` +
+                        `to itself: ${parentName}`;
             throw new er.APIError(msg, httpStatus.UNPROCESSABLE_ENTITY);
         }
 
@@ -62,10 +64,13 @@ class OrgNetworkParser {
                 .then(() => {
                     return {
                         parentName: parentName,
-                        daughterName: currentOrg.name
-                    }
+                        daughterName: currentOrg.name,
+                    };
                 })
-                .then(relationObj => models.Relation.creating(relationObj, this.transaction))
+                .then((relationObj) => {
+                    return models.Relation.creating(relationObj,
+                                                    this.transaction);
+                })
         );
 
         if (srcObj.daughters) {
@@ -94,7 +99,8 @@ class OrgNetworkParser {
      * Just used for rollback operation.
      *
      * @method handleFailedCollecting
-     * @return {Promise} Returns transaction promise object if rollback done.
+     * @param {Object} err Exception object
+     * @throws {Promise} Returns transaction promise object if rollback done.
      */
     handleFailedCollecting(err) {
         if (!this.transaction.finished) {
@@ -104,30 +110,33 @@ class OrgNetworkParser {
     }
 
     /**
-     * Class main method, that starts transaction and process all parsing and handle data
-     * db insertion.
+     * Class main method, that starts transaction and process all parsing and
+     * handle data db insertion.
+     *
      * @method collectingData
-     * @param {Object} obj Object has structure described in OrgNetworkParser class description.
+     * @param {Object} obj Object has structure described in OrgNetworkParser
+     *     class description.
      * @return {Promise} Returns transaction promise object if rollback done.
      */
     collectingData(obj) {
         if (_.isEmpty(obj)) return Promise.resolve();
 
         return models.db.sequelize.transaction()
-            .then(t => {
+            .then((t) => {
                 this.transaction = t;
                 this.fetchRecords(obj, null);
             })
             .catch((err) => this.handleFailedCollecting(err))
             .then(() => Promise.all(this.promises))
             .then((results) => this.handleSucceededCollecting(results))
-            .catch((err) => this.handleFailedCollecting(err))
+            .catch((err) => this.handleFailedCollecting(err));
     }
 }
 
 
 /**
  * Handler for POST api/organizations
+ *
  * @method createOrganizationsNetwork
  * @param {Object} req Express request object.
  * @param {Object} res Express response object.
@@ -139,11 +148,11 @@ const createOrganizationsNetwork = function(req, res, next) {
         .then(() => {
             const status = httpStatus.CREATED;
             res.status(status);
-            res.json({message: httpStatus[status]})
+            res.json({message: httpStatus[status]});
         })
         .catch((er) => {
-            let status = er.status || httpStatus.INTERNAL_SERVER_ERROR,
-                msg = er.message || httpStatus[status];
+            let status = er.status || httpStatus.INTERNAL_SERVER_ERROR;
+            let msg = er.message || httpStatus[status];
             if (status === httpStatus.INTERNAL_SERVER_ERROR) {
                 msg = httpStatus[status];
             }
@@ -155,25 +164,28 @@ const createOrganizationsNetwork = function(req, res, next) {
 
 /**
  * Handler for GET api/organizations/:name/relations
+ *
  * @method getAllRelations
  * @param {Object} req Express request object.
  * @param {Object} res Express response object.
  * @param {Object} next Middleware function used by Express.
  */
 const getAllRelations = function(req, res, next) {
-    let pageNumber = parseInt(req.query.page),
-        targetName = req.params.name;
+    let pageNumber = parseInt(req.query.page);
+    let targetName = req.params.name;
 
     // default value if not pointed
-    if (typeof req.query.page === "undefined") {
+    if (typeof req.query.page === 'undefined') {
         pageNumber = 1;
     }
 
     if (isNaN(pageNumber) || pageNumber < 1) {
-        throw new er.APIError("Invalid page number", httpStatus.UNPROCESSABLE_ENTITY);
+        throw new er.APIError('Invalid page number',
+                              httpStatus.UNPROCESSABLE_ENTITY);
     }
     if (!targetName) {
-        throw new er.APIError("Invalid target organization name", httpStatus.UNPROCESSABLE_ENTITY);
+        throw new er.APIError('Invalid target organization name',
+                               httpStatus.UNPROCESSABLE_ENTITY);
     }
 
     models.Relation.gettingPaginated(targetName, pageNumber)
@@ -184,5 +196,5 @@ const getAllRelations = function(req, res, next) {
 
 module.exports = {
     getAllRelations: getAllRelations,
-    createOrganizationsNetwork: createOrganizationsNetwork
+    createOrganizationsNetwork: createOrganizationsNetwork,
 };

@@ -1,5 +1,5 @@
 const nconf = require('nconf');
-    path = require('path');
+const path = require('path');
 
 let configFile = null;
 
