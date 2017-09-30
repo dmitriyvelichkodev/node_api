@@ -1,0 +1,31 @@
+version: '3.1'
+
+services:
+    db:
+        image: mysql:5.6
+        restart: always
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_DATABASE: org_dev
+            MYSQL_USER: root
+            MYSQL_ROOT_PASSWORD: mysql
+            MYSQL_PASSWORD: mysql
+
+    webserver:
+        build: .
+        restart: always
+        volumes:
+            # Mounts the project directory on the host to /app inside the container,
+            # allowing you to modify the code without having to rebuild the image.
+            - .:/app
+            # Data present in the base image at the specified mount point will be copied
+            # over to the new volume upon volume initialization.
+            # node_modules from this new volume will be used and not from your local dev env.
+            - /app/node_modules
+        ports:
+            - 3000:3000
+        command:
+            /bin/sh -c "./wait.sh && npm start"
+        environment:
+            WAIT_HOSTS: db:3306
