@@ -62,18 +62,14 @@ class OrgNetworkParser {
         this.promises.push(
             models.Organization.creating(currentOrg, this.transaction)
                 .then(() => {
-                    return {
-                        parentName: parentName,
-                        daughterName: currentOrg.name,
-                    };
-                })
-                .then((relationObj) => {
-                    return models.Relation.creating(relationObj,
-                                                    this.transaction);
+                    return models.Relation.creating({
+                                        parentName: parentName,
+                                        daughterName: currentOrg.name,
+                                    }, this.transaction);
                 })
         );
 
-        if (srcObj.daughters) {
+        if (_.isEmpty(srcObj.daughters)) {
             srcObj.daughters.forEach((el) => {
                 this.fetchRecords(el, srcObj.org_name);
             });
