@@ -179,7 +179,7 @@ const getAllRelations = function(req, res, next) {
         throw new er.APIError('Invalid page number',
                               httpStatus.UNPROCESSABLE_ENTITY);
     }
-    if (!targetName) {
+    if (!_.isString(targetName)) {
         throw new er.APIError('Invalid target organization name',
                                httpStatus.UNPROCESSABLE_ENTITY);
     }

@@ -27,10 +27,10 @@ const startServer = () => {
             throw error;
         }
 
-        console.error(error);
+        debug(error);
     });
     server.on('listening', () => {
-        debug('Listening on ' + server.address().port);
+        debug(`Listening on ${server.address().port}`);
     });
 };
 
@@ -40,4 +40,4 @@ const startServer = () => {
 const dbInit = require('../config/dbInit');
 dbInit.init()
     .then(startServer)
-    .catch((er) => console.error(er.message, er.stack));
+    .catch((er) => debug(er.message, er.stack));

@@ -1,5 +1,6 @@
 const config = require('config');
 const debug = require('debug')('test-node:server');
+const logger = require('../helpers/winston');
 const mysql = require('promise-mysql');
 
 const dbConfig = config.get('db');
