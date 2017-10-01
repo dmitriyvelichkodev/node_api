@@ -4,9 +4,15 @@ YUI.add("yuidoc-meta", function(Y) {
         "OrgNetworkParser"
     ],
     "modules": [
+        "errors",
         "organizations.controller"
     ],
     "allModules": [
+        {
+            "displayName": "errors",
+            "name": "errors",
+            "description": "Provides classes for custom Exception objects"
+        },
         {
             "displayName": "organizations.controller",
             "name": "organizations.controller",

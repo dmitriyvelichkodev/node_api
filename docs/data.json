@@ -11,9 +11,25 @@
             "modules": {
                 "organizations.controller": 1
             },
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "helpers/errors.js": {
+            "name": "helpers/errors.js",
+            "modules": {
+                "errors": 1
+            },
             "classes": {
                 "OrgNetworkParser": 1
             },
+            "fors": {},
+            "namespaces": {}
+        },
+        "helpers/winston.js": {
+            "name": "helpers/winston.js",
+            "modules": {},
+            "classes": {},
             "fors": {},
             "namespaces": {}
         },
@@ -37,15 +53,27 @@
             "name": "organizations.controller",
             "submodules": {},
             "elements": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "controllers/organizations.controller.js",
+            "line": 1,
+            "description": "Provides classes and methods that process requests for /api/organizations"
+        },
+        "errors": {
+            "name": "errors",
+            "submodules": {},
+            "elements": {},
             "classes": {
                 "OrgNetworkParser": 1
             },
             "fors": {},
             "namespaces": {},
             "tag": "module",
-            "file": "controllers/organizations.controller.js",
-            "line": 13,
-            "description": "Provides classes and methods that process requests for /api/organizations"
+            "file": "helpers/errors.js",
+            "line": 6,
+            "description": "Provides classes for custom Exception objects"
         }
     },
     "classes": {
@@ -57,11 +85,11 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "module": "organizations.controller",
+            "module": "errors",
             "namespace": "",
-            "file": "controllers/organizations.controller.js",
-            "line": 13,
-            "description": "Allows to parse input JSON data in format:\n{\n  \"org_name\": \"Name of organization\",\n  \"daughters\":[\n      {\n          \"org_name\": \"Name of organization\",\n              \"daughters\": [...]\n      },\n      ...\n      ]\n}\nand fill data into db with method collectingData;"
+            "file": "helpers/errors.js",
+            "line": 6,
+            "description": "General error for API errors, receives usual error message\nand http status code."
         }
     },
     "elements": {},
@@ -84,7 +112,7 @@
             "params": [
                 {
                     "name": "srcObj",
-                    "description": "Object has structure described in OrgNetworkParser class description.",
+                    "description": "Object has structure described in\n   OrgNetworkParser class description.",
                     "type": "Object"
                 },
                 {
@@ -98,7 +126,7 @@
         },
         {
             "file": "controllers/organizations.controller.js",
-            "line": 78,
+            "line": 79,
             "description": "Method used for succeeded transaction end. Can be used in chain\nseveral times, COMMIT transaction only ones.",
             "itemtype": "method",
             "name": "handleSucceededCollecting",
@@ -111,11 +139,18 @@
         },
         {
             "file": "controllers/organizations.controller.js",
-            "line": 91,
+            "line": 92,
             "description": "Method used for failed transaction end. Can be used in chain\nseveral times, ROLLBACK transaction only ones. Send exception further.\nJust used for rollback operation.",
             "itemtype": "method",
             "name": "handleFailedCollecting",
-            "return": {
+            "params": [
+                {
+                    "name": "err",
+                    "description": "Exception object",
+                    "type": "Object"
+                }
+            ],
+            "throws": {
                 "description": "Returns transaction promise object if rollback done.",
                 "type": "Promise"
             },
@@ -124,14 +159,14 @@
         },
         {
             "file": "controllers/organizations.controller.js",
-            "line": 106,
-            "description": "Class main method, that starts transaction and process all parsing and handle data\ndb insertion.",
+            "line": 108,
+            "description": "Class main method, that starts transaction and process all parsing and\nhandle data db insertion.",
             "itemtype": "method",
             "name": "collectingData",
             "params": [
                 {
                     "name": "obj",
-                    "description": "Object has structure described in OrgNetworkParser class description.",
+                    "description": "Object has structure described in OrgNetworkParser\n    class description.",
                     "type": "Object"
                 }
             ],
@@ -144,7 +179,7 @@
         },
         {
             "file": "controllers/organizations.controller.js",
-            "line": 129,
+            "line": 133,
             "description": "Handler for POST api/organizations",
             "itemtype": "method",
             "name": "createOrganizationsNetwork",
@@ -170,8 +205,8 @@
         },
         {
             "file": "controllers/organizations.controller.js",
-            "line": 156,
-            "description": "Handler for GET api/organizations",
+            "line": 161,
+            "description": "Handler for GET api/organizations/:name/relations",
             "itemtype": "method",
             "name": "getAllRelations",
             "params": [
@@ -195,32 +230,55 @@
             "module": "organizations.controller"
         },
         {
-            "file": "routes/api.organizations.routes.js",
-            "line": 8,
-            "class": "",
-            "module": "organizations.controller"
+            "file": "helpers/errors.js",
+            "line": 13,
+            "description": "Constructor for APIError",
+            "params": [
+                {
+                    "name": "message",
+                    "description": "Error message",
+                    "type": "String"
+                },
+                {
+                    "name": "status",
+                    "description": "HTTP status code",
+                    "type": "Int"
+                }
+            ],
+            "itemtype": "method",
+            "name": "constructor",
+            "class": "OrgNetworkParser",
+            "module": "errors"
         },
         {
             "file": "routes/api.organizations.routes.js",
-            "line": 12,
+            "line": 8,
+            "description": "POST /api/organizations - Create new organizations with relations",
             "class": "",
-            "module": "organizations.controller"
+            "module": "errors"
+        },
+        {
+            "file": "routes/api.organizations.routes.js",
+            "line": 14,
+            "description": "GET /api/organizations/:name/relations - Get list of relations for\norganization with :name",
+            "class": "",
+            "module": "errors"
         },
         {
             "file": "routes/api.routes.js",
             "line": 8,
             "class": "",
-            "module": "organizations.controller"
+            "module": "errors"
         }
     ],
     "warnings": [
         {
-            "message": "Missing item type",
+            "message": "Missing item type\nPOST /api/organizations - Create new organizations with relations",
             "line": " routes/api.organizations.routes.js:8"
         },
         {
-            "message": "Missing item type",
-            "line": " routes/api.organizations.routes.js:12"
+            "message": "Missing item type\nGET /api/organizations/:name/relations - Get list of relations for\norganization with :name",
+            "line": " routes/api.organizations.routes.js:14"
         },
         {
             "message": "Missing item type",

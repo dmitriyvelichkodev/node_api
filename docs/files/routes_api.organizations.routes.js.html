@@ -43,6 +43,7 @@
                 
                 
                             <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/errors.html">errors</a></li>
                                 <li><a href="../modules/organizations.controller.html">organizations.controller</a></li>
                             </ul>
                         </div>
@@ -85,14 +86,19 @@ const express = require(&#x27;express&#x27;);
 
 const organizationsCtrl = require(&#x27;../controllers/organizations.controller&#x27;);
 
-const router = express.Router();
+const router = express.Router(); // eslint-disable-line new-cap
 
 router.route(&#x27;/&#x27;)
-    /** POST /api/organizations - Create new organizations with relations */
+    /**
+     * POST /api/organizations - Create new organizations with relations
+     */
     .post(organizationsCtrl.createOrganizationsNetwork);
 
 router.route(&#x27;/:name/relations&#x27;)
-    /** GET /api/organizations/:name/relations - Get list of relations for organization with :name */
+    /**
+     * GET /api/organizations/:name/relations - Get list of relations for
+     * organization with :name
+     */
     .get(organizationsCtrl.getAllRelations);
 
 module.exports = router;

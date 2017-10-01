@@ -84,6 +84,8 @@ By default container runs with npm start.
 1) enter docker webserver container
 2) run inside ```npm test```
 
+##### Docs
+Docs are availbale on docs folder - docs/index.html
 
 ## License
 This project is licensed under the [MIT License]

@@ -43,6 +43,7 @@
                 
                 
                             <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/errors.html">errors</a></li>
                                 <li><a href="../modules/organizations.controller.html">organizations.controller</a></li>
                             </ul>
                         </div>
@@ -86,12 +87,11 @@
  * @module organizations.controller
  */
 
-const debug = require(&#x27;debug&#x27;)(&#x27;test-node:server&#x27;),
-    _ = require(&#x27;lodash&#x27;),
-    httpStatus = require(&#x27;http-status&#x27;);
+const _ = require(&#x27;lodash&#x27;);
+const httpStatus = require(&#x27;http-status&#x27;);
 
-const models = require(&#x27;../models/models&#x27;),
-    er = require(&#x27;../helpers/errors&#x27;);
+const models = require(&#x27;../models/models&#x27;);
+const er = require(&#x27;../helpers/errors&#x27;);
 
 /**
  * Allows to parse input JSON data in format:
@@ -106,6 +106,7 @@ const models = require(&#x27;../models/models&#x27;),
  *       ]
  * }
  * and fill data into db with method collectingData;
+ *
  * @class OrgNetworkParser
  */
 class OrgNetworkParser {
@@ -126,7 +127,8 @@ class OrgNetworkParser {
      * case at least one organization has reference to itself.
      *
      * @method fetchRecords
-     * @param {Object} srcObj Object has structure described in OrgNetworkParser class description.
+     * @param {Object} srcObj Object has structure described in
+     *    OrgNetworkParser class description.
      * @param {String} parentName Name of organization which daughters currently
      * parsing
      */
@@ -136,22 +138,22 @@ class OrgNetworkParser {
         const currentOrg = {name: srcObj.org_name};
 
         if (parentName === currentOrg.name) {
-            const msg = &#x60;Received data has organization that referenced to itself: ${parentName}&#x60;;
+            const msg = &#x60;Received data has organization that referenced &#x60; +
+                        &#x60;to itself: ${parentName}&#x60;;
             throw new er.APIError(msg, httpStatus.UNPROCESSABLE_ENTITY);
         }
 
         this.promises.push(
             models.Organization.creating(currentOrg, this.transaction)
                 .then(() =&gt; {
-                    return {
-                        parentName: parentName,
-                        daughterName: currentOrg.name
-                    }
+                    return models.Relation.creating({
+                                        parentName: parentName,
+                                        daughterName: currentOrg.name,
+                                    }, this.transaction);
                 })
-                .then(relationObj =&gt; models.Relation.creating(relationObj, this.transaction))
         );
 
-        if (srcObj.daughters) {
+        if (!_.isEmpty(srcObj.daughters)) {
             srcObj.daughters.forEach((el) =&gt; {
                 this.fetchRecords(el, srcObj.org_name);
             });
@@ -177,40 +179,44 @@ class OrgNetworkParser {
      * Just used for rollback operation.
      *
      * @method handleFailedCollecting
-     * @return {Promise} Returns transaction promise object if rollback done.
+     * @param {Object} err Exception object
+     * @throws {Promise} Returns transaction promise object if rollback done.
      */
     handleFailedCollecting(err) {
-        if (this.transaction.finished) {
+        if (!this.transaction.finished) {
             this.transaction.rollback();
         }
         throw err;
     }
 
     /**
-     * Class main method, that starts transaction and process all parsing and handle data
-     * db insertion.
+     * Class main method, that starts transaction and process all parsing and
+     * handle data db insertion.
+     *
      * @method collectingData
-     * @param {Object} obj Object has structure described in OrgNetworkParser class description.
+     * @param {Object} obj Object has structure described in OrgNetworkParser
+     *     class description.
      * @return {Promise} Returns transaction promise object if rollback done.
      */
     collectingData(obj) {
         if (_.isEmpty(obj)) return Promise.resolve();
 
         return models.db.sequelize.transaction()
-            .then(t =&gt; {
+            .then((t) =&gt; {
                 this.transaction = t;
                 this.fetchRecords(obj, null);
             })
             .catch((err) =&gt; this.handleFailedCollecting(err))
             .then(() =&gt; Promise.all(this.promises))
             .then((results) =&gt; this.handleSucceededCollecting(results))
-            .catch((err) =&gt; this.handleFailedCollecting(err))
+            .catch((err) =&gt; this.handleFailedCollecting(err));
     }
 }
 
 
 /**
  * Handler for POST api/organizations
+ *
  * @method createOrganizationsNetwork
  * @param {Object} req Express request object.
  * @param {Object} res Express response object.
@@ -222,11 +228,11 @@ const createOrganizationsNetwork = function(req, res, next) {
         .then(() =&gt; {
             const status = httpStatus.CREATED;
             res.status(status);
-            res.json({message: httpStatus[status]})
+            res.json({message: httpStatus[status]});
         })
         .catch((er) =&gt; {
-            let status = er.status || httpStatus.INTERNAL_SERVER_ERROR,
-                msg = er.message || httpStatus[status];
+            let status = er.status || httpStatus.INTERNAL_SERVER_ERROR;
+            let msg = er.message || httpStatus[status];
             if (status === httpStatus.INTERNAL_SERVER_ERROR) {
                 msg = httpStatus[status];
             }
@@ -237,19 +243,40 @@ const createOrganizationsNetwork = function(req, res, next) {
 };
 
 /**
- * Handler for GET api/organizations
+ * Handler for GET api/organizations/:name/relations
+ *
  * @method getAllRelations
  * @param {Object} req Express request object.
  * @param {Object} res Express response object.
  * @param {Object} next Middleware function used by Express.
  */
 const getAllRelations = function(req, res, next) {
+    let pageNumber = parseInt(req.query.page);
+    let targetName = req.params.name;
 
+    // default value if not pointed
+    if (typeof req.query.page === &#x27;undefined&#x27;) {
+        pageNumber = 1;
+    }
+
+    if (isNaN(pageNumber) || pageNumber &lt; 1) {
+        throw new er.APIError(&#x27;Invalid page number&#x27;,
+                              httpStatus.UNPROCESSABLE_ENTITY);
+    }
+    if (!_.isString(targetName)) {
+        throw new er.APIError(&#x27;Invalid target organization name&#x27;,
+                               httpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    models.Relation.gettingPaginated(targetName, pageNumber)
+        .then((result) =&gt; {
+            res.json(result);
+        });
 };
 
 module.exports = {
     getAllRelations: getAllRelations,
-    createOrganizationsNetwork: createOrganizationsNetwork
+    createOrganizationsNetwork: createOrganizationsNetwork,
 };
 
     </pre>

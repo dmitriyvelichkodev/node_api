@@ -43,6 +43,7 @@
                 
                 
                             <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/errors.html">errors</a></li>
                                 <li><a href="../modules/organizations.controller.html">organizations.controller</a></li>
                             </ul>
                         </div>
@@ -82,27 +83,17 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/controllers_organizations.controller.js.html#l13"><code>controllers&#x2F;organizations.controller.js:13</code></a>
+            Defined in: <a href="../files/helpers_errors.js.html#l6"><code>helpers&#x2F;errors.js:6</code></a>
         </div>
 
-            Module: <a href="../modules/organizations.controller.html">organizations.controller</a>
+            Module: <a href="../modules/errors.html">errors</a>
 
 </div>
 
 
 <div class="box intro">
-    <p>Allows to parse input JSON data in format:
-{
-&quot;org_name&quot;: &quot;Name of organization&quot;,
-&quot;daughters&quot;:[
-{
-&quot;org_name&quot;: &quot;Name of organization&quot;,
-&quot;daughters&quot;: [...]
-},
-...
-]
-}
-and fill data into db with method collectingData;</p>
+    <p>General error for API errors, receives usual error message
+and http status code.</p>
 
 </div>
 
@@ -124,6 +115,10 @@ and fill data into db with method collectingData;</p>
                     <ul class="index-list methods">
                             <li class="index-item method">
                                 <a href="#method_collectingData">collectingData</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_constructor">constructor</a>
 
                             </li>
                             <li class="index-item method">
@@ -182,9 +177,10 @@ and fill data into db with method collectingData;</p>
 
 
     <div class="meta">
+                    <p>Provided by the <a href="../modules/organizations.controller.html">organizations.controller</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/controllers_organizations.controller.js.html#l106"><code>controllers&#x2F;organizations.controller.js:106</code></a>
+        <a href="../files/controllers_organizations.controller.js.html#l108"><code>controllers&#x2F;organizations.controller.js:108</code></a>
         </p>
 
 
@@ -192,8 +188,8 @@ and fill data into db with method collectingData;</p>
     </div>
 
     <div class="description">
-        <p>Class main method, that starts transaction and process all parsing and handle data
-db insertion.</p>
+        <p>Class main method, that starts transaction and process all parsing and
+handle data db insertion.</p>
 
     </div>
 
@@ -207,7 +203,8 @@ db insertion.</p>
 
 
                     <div class="param-description">
-                        <p>Object has structure described in OrgNetworkParser class description.</p>
+                        <p>Object has structure described in OrgNetworkParser
+class description.</p>
 
                     </div>
 
@@ -240,6 +237,7 @@ db insertion.</p>
 
 
     <div class="meta">
+                    <p>Provided by the <a href="../modules/organizations.controller.html">organizations.controller</a> module.</p>
                 <p>
                 Defined in
         <a href="../files/controllers_organizations.controller.js.html#l29"><code>controllers&#x2F;organizations.controller.js:29</code></a>
@@ -256,6 +254,74 @@ promises array.</p>
 
     </div>
 
+
+
+
+</div>
+<div id="method_constructor" class="method item">
+    <h3 class="name"><code>constructor</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>message</code>
+                </li>
+                <li class="arg">
+                        <code>status</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/helpers_errors.js.html#l13"><code>helpers&#x2F;errors.js:13</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Constructor for APIError</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">message</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        <p>Error message</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">status</code>
+                        <span class="type">Int</span>
+
+
+                    <div class="param-description">
+                        <p>HTTP status code</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
 
 
 
@@ -285,9 +351,10 @@ promises array.</p>
 
 
     <div class="meta">
+                    <p>Provided by the <a href="../modules/organizations.controller.html">organizations.controller</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/controllers_organizations.controller.js.html#l129"><code>controllers&#x2F;organizations.controller.js:129</code></a>
+        <a href="../files/controllers_organizations.controller.js.html#l133"><code>controllers&#x2F;organizations.controller.js:133</code></a>
         </p>
 
 
@@ -364,6 +431,7 @@ promises array.</p>
 
 
     <div class="meta">
+                    <p>Provided by the <a href="../modules/organizations.controller.html">organizations.controller</a> module.</p>
                 <p>
                 Defined in
         <a href="../files/controllers_organizations.controller.js.html#l40"><code>controllers&#x2F;organizations.controller.js:40</code></a>
@@ -390,7 +458,8 @@ case at least one organization has reference to itself.</p>
 
 
                     <div class="param-description">
-                        <p>Object has structure described in OrgNetworkParser class description.</p>
+                        <p>Object has structure described in
+OrgNetworkParser class description.</p>
 
                     </div>
 
@@ -438,9 +507,10 @@ parsing</p>
 
 
     <div class="meta">
+                    <p>Provided by the <a href="../modules/organizations.controller.html">organizations.controller</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/controllers_organizations.controller.js.html#l156"><code>controllers&#x2F;organizations.controller.js:156</code></a>
+        <a href="../files/controllers_organizations.controller.js.html#l161"><code>controllers&#x2F;organizations.controller.js:161</code></a>
         </p>
 
 
@@ -448,7 +518,7 @@ parsing</p>
     </div>
 
     <div class="description">
-        <p>Handler for GET api/organizations</p>
+        <p>Handler for GET api/organizations/:name/relations</p>
 
     </div>
 
@@ -498,11 +568,14 @@ parsing</p>
 <div id="method_handleFailedCollecting" class="method item">
     <h3 class="name"><code>handleFailedCollecting</code></h3>
 
-        <span class="paren">()</span>
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>err</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
 
-        <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>
-        </span>
 
 
 
@@ -511,9 +584,10 @@ parsing</p>
 
 
     <div class="meta">
+                    <p>Provided by the <a href="../modules/organizations.controller.html">organizations.controller</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/controllers_organizations.controller.js.html#l91"><code>controllers&#x2F;organizations.controller.js:91</code></a>
+        <a href="../files/controllers_organizations.controller.js.html#l92"><code>controllers&#x2F;organizations.controller.js:92</code></a>
         </p>
 
 
@@ -527,17 +601,34 @@ Just used for rollback operation.</p>
 
     </div>
 
+        <div class="params">
+            <h4>Parameters:</h4>
 
-        <div class="returns">
-            <h4>Returns:</h4>
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">err</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
 
-            <div class="returns-description">
+
+                    <div class="param-description">
+                        <p>Exception object</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+        <div class="throws">
+            <h4>Throws:</h4>
+
+            <div class="throws-description">
                         <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>:
                     <p>Returns transaction promise object if rollback done.</p>
 
             </div>
         </div>
-
 
 </div>
 <div id="method_handleSucceededCollecting" class="method item">
@@ -556,9 +647,10 @@ Just used for rollback operation.</p>
 
 
     <div class="meta">
+                    <p>Provided by the <a href="../modules/organizations.controller.html">organizations.controller</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/controllers_organizations.controller.js.html#l78"><code>controllers&#x2F;organizations.controller.js:78</code></a>
+        <a href="../files/controllers_organizations.controller.js.html#l79"><code>controllers&#x2F;organizations.controller.js:79</code></a>
         </p>
 
 
