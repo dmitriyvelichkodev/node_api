@@ -69,7 +69,7 @@ class OrgNetworkParser {
                 })
         );
 
-        if (_.isEmpty(srcObj.daughters)) {
+        if (!_.isEmpty(srcObj.daughters)) {
             srcObj.daughters.forEach((el) => {
                 this.fetchRecords(el, srcObj.org_name);
             });

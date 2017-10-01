@@ -77,7 +77,7 @@ describe('## Testing /api/organizations', function() {
                     expect(res.status)
                         .to.equal(httpStatus.UNPROCESSABLE_ENTITY);
                     expect(res.body.message).to.equal(
-                        `Received data has organization that referenced to` +
+                        `Received data has organization that referenced to ` +
                          `itself: ${orgsFailedReferenceToItself.org_name}`);
                     done();
                 });

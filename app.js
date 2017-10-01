@@ -11,7 +11,7 @@ const helmet = require('helmet');
 
 const api = require('./routes/api.routes');
 const er = require('./helpers/errors');
-const config = require('./config/index');
+const config = require('config');
 const winstonInstance =require('./helpers/winston');
 const logDirectory = path.join(__dirname, 'log');
 
