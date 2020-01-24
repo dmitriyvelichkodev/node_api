@@ -35,17 +35,6 @@ Output format:
 ]
 ```
 
-### Features
-
-- Uses docker-compose to run app in containers
-- Uses yuidoc to auto generate documentations
-- Availbale API tests with mocha
-- Detect organizations related to itself, return 422 status code
-- Uses [http-status](https://www.npmjs.com/package/http-status) to set http status code.
-
-
-
-
 ### Getting Started
 
 Clone the repo:
@@ -56,11 +45,11 @@ cd node_api
 
 Install docker:
 https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#uninstall-docker-ce
-Docker version 17.06.0-ce, build 02c1d87
+Docker version 17.06.0-ce
 
 Install docker-compose:
 https://docs.docker.com/compose/install/#install-compose
-docker-compose version 1.16.1, build 6d1ac21
+docker-compose version 1.16.1
 
 Install yuidoc globally(If need regenerate documentation):
 ```js
